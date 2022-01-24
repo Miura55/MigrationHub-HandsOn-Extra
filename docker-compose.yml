@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "28000:8000"
+    volumes:
+      - "./dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+
+  dynamodb-admin:
+    image: instructure/dynamo-local-admin
+    depends_on:
+      - dynamodb-local
+    ports:
+      - "28001:8001"
+    environment:
+      - DYNAMO_ENDPOINT=http://dynamodb-local:8000
+
+  remove-basket-api:
+    build: ./RemoveUnicornFromBasketV2
+    volumes:
+      - ./aws-credentials:/root/.aws
+    depends_on:
+      - dynamodb-local
+    ports:
+      - "10080:8080"
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+
+  add-basket-api:
+    build: ./AddUnicornFromBasketV2
+    volumes:
+      - ./aws-credentials:/root/.aws
+    depends_on:
+      - dynamodb-local
+    ports:
+      - "20080:8080"
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+
+  get-basket-api:
+    build: ./GetUnicornFromBasketV2
+    volumes:
+      - ./aws-credentials:/root/.aws
+    depends_on:
+      - dynamodb-local
+    ports:
+      - "30080:8080"
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
