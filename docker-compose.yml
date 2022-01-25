@@ -11,7 +11,7 @@ services:
     working_dir: /home/dynamodblocal
 
   dynamodb-admin:
-    image: instructure/dynamo-local-admin
+    image: "aaronshaf/dynamodb-admin:latest"
     depends_on:
       - dynamodb-local
     ports:
