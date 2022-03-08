@@ -31,7 +31,7 @@ services:
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
 
   add-basket-api:
-    build: ./AddUnicornFromBasketV2
+    build: ./AddUnicornToBasketV2
     volumes:
       - ./aws-credentials:/root/.aws
     depends_on:
@@ -42,12 +42,45 @@ services:
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
 
   get-basket-api:
-    build: ./GetUnicornFromBasketV2
+    build: ./GetUnicornsBasketV2
     volumes:
       - ./aws-credentials:/root/.aws
     depends_on:
       - dynamodb-local
     ports:
       - "30080:8080"
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+
+  signup-api:
+    build: ./Appendix/SignupUnicorn
+    volumes:
+      - ./aws-credentials:/root/.aws
+    depends_on:
+      - dynamodb-local
+    ports:
+      - "40080:8080"
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+
+  login-api:
+    build: ./Appendix/LoginUnicorn
+    volumes:
+      - ./aws-credentials:/root/.aws
+    depends_on:
+      - dynamodb-local
+    ports:
+      - "50080:8080"
+    environment:
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+
+  get-unicorn-api:
+    build: ./Appendix/GetUnicorn
+    volumes:
+      - ./aws-credentials:/root/.aws
+    depends_on:
+      - dynamodb-local
+    ports:
+      - "60080:8080"
     environment:
       - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
